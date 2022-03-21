@@ -1,14 +1,13 @@
 package main
 
 import (
-	"github.com/chirag3003/ecommerce-golang-api/config"
+	"github.com/chirag3003/ecommerce-golang-api/controllers"
 	"github.com/chirag3003/ecommerce-golang-api/db"
+	"github.com/chirag3003/ecommerce-golang-api/routes"
 	"github.com/gofiber/fiber/v2"
 	"github.com/joho/godotenv"
 	"log"
 )
-
-var appConfig *config.AppConfig
 
 func main() {
 	//Loading Environment Variables
@@ -24,10 +23,9 @@ func main() {
 	//creating fiber app
 	app := fiber.New()
 
-	//setting up configs
-	appConfig.Conn = client
-	appConfig.App = app
+	//Setting Up Controllers
 
+	routes.NewRoutes(controllers.NewControllers(client), app)
 	app.Get("/", func(c *fiber.Ctx) error {
 		return c.SendString("Hello, World!")
 	})
