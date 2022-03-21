@@ -6,15 +6,9 @@ import (
 
 func ValidateProductData(body *models.ProductsModel) Errors {
 	var err = Errors(map[string][]string{})
-	if !err.CheckLen(body.Title, 3) {
-		err.Add("title", "min Length required is 3")
-	}
-	if !err.CheckLen(body.Slug, 3) {
-		err.Add("slug", "min Length required is 3")
-	}
-	if !err.CheckMinValue(float64(body.Stock), 0) {
-		err.Add("stock", "min stock required is 0")
-	}
+	err.CheckLen(body.Title, 3, "title")
+	err.CheckLen(body.Slug, 3, "slug")
+	err.CheckMinValue(float64(body.Stock), 0, "stock")
 	if err.IsValid() {
 		return nil
 	}

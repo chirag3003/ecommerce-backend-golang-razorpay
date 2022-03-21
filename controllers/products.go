@@ -47,8 +47,6 @@ func (c *productRoutes) Create(ctx *fiber.Ctx) error {
 	//validating input
 	inputError := helpers.ValidateProductData(body)
 	if inputError != nil {
-
-		log.Println(inputError)
 		return ctx.Status(fiber.StatusBadRequest).JSON(inputError)
 	}
 
