@@ -8,5 +8,7 @@ func ProductsRoutes(router fiber.Router) {
 	router.Get("/:id", conts.Products.Find)
 	router.Post("/", conts.Products.Create)
 	router.Delete("/:id", conts.Products.Delete)
+	router.Patch("/:id", conts.Products.Publicity)
+	router.Put("/:id", conts.Products.Update)
 
 }
