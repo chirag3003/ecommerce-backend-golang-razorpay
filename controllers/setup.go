@@ -13,7 +13,7 @@ type Controllers struct {
 func NewControllers(conf db.Connection) *Controllers {
 	conn = conf
 	controllers := &Controllers{
-		Products: ProductRoutes(),
+		Products: ProductsControllers(),
 	}
 	return controllers
 }

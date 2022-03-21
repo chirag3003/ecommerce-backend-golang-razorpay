@@ -1,8 +1,11 @@
 package controllers
 
 import (
+	"github.com/chirag3003/ecommerce-golang-api/config"
+	"github.com/chirag3003/ecommerce-golang-api/models"
+	"github.com/chirag3003/ecommerce-golang-api/repository"
 	"github.com/gofiber/fiber/v2"
-	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 type Products interface {
@@ -13,12 +16,12 @@ type Products interface {
 }
 
 type productRoutes struct {
-	Products *mongo.Collection
+	Products repository.ProductsRepository
 }
 
-func ProductRoutes() Products {
+func ProductsControllers() Products {
 	return &productRoutes{
-		Products: conn.DB().Collection("products"),
+		Products: repository.NewProductsRepository(conn.DB().Collection(config.PRODUCTS_COLLECTION)),
 	}
 }
 
@@ -27,7 +30,23 @@ func (c *productRoutes) FindAll(ctx *fiber.Ctx) error {
 }
 
 func (c *productRoutes) Create(ctx *fiber.Ctx) error {
-	return ctx.SendStatus(200)
+	body := &models.ProductsModel{
+		Title:       "Product",
+		Description: "Description",
+	}
+	body.SetDefaults()
+	res, err := c.Products.Save(body)
+	if err != nil {
+		return ctx.SendStatus(fiber.StatusBadRequest)
+	}
+
+	id, ok := res.InsertedID.(primitive.ObjectID)
+	if !ok {
+		return ctx.SendStatus(fiber.StatusInternalServerError)
+	}
+	body.ID = id
+
+	return ctx.Status(fiber.StatusOK).JSON(body)
 }
 
 func (c *productRoutes) Find(ctx *fiber.Ctx) error {
