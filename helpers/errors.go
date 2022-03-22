@@ -16,10 +16,7 @@ func (e Errors) Get(field string) []string {
 }
 
 func (e Errors) IsValid() bool {
-	if len(e) == 0 {
-		return true
-	}
-	return false
+	return len(e) == 0
 }
 
 func (e Errors) CheckLen(str string, minLen int, field ...string) bool {
