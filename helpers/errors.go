@@ -7,7 +7,7 @@ import (
 
 type Errors map[string][]string
 
-func (e Errors) Add(field string, err string) {
+func (e Errors) Add(field, err string) {
 	e[field] = append(e[field], err)
 }
 
@@ -42,7 +42,7 @@ func (e Errors) CheckMaxLen(str string, maxLen int, field ...string) bool {
 	return true
 }
 
-func (e Errors) CheckMinValue(val float64, minVal float64, field ...string) bool {
+func (e Errors) CheckMinValue(val, minVal float64, field ...string) bool {
 	if val < minVal {
 		if len(field) > 0 {
 			e.Add(field[0], fmt.Sprintf("min value required is %f", minVal))
@@ -52,7 +52,7 @@ func (e Errors) CheckMinValue(val float64, minVal float64, field ...string) bool
 	return true
 }
 
-func (e Errors) CheckMaxValue(val float64, maxVal float64, field ...string) bool {
+func (e Errors) CheckMaxValue(val, maxVal float64, field ...string) bool {
 	if val > maxVal {
 		if len(field) > 0 {
 			e.Add(field[0], fmt.Sprintf("max value required is %f", maxVal))
