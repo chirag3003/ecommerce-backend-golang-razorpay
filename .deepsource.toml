@@ -1,0 +1,12 @@
+version = 1
+
+[[analyzers]]
+name = "go"
+enabled = true
+
+  [analyzers.meta]
+  import_root = "github.com/chirag3003/ecommerce-api-golang-mongodb"
+
+[[transformers]]
+name = "gofmt"
+enabled = true
