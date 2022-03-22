@@ -10,4 +10,5 @@ var conts *controllers.Controllers
 func NewRoutes(cont *controllers.Controllers, app *fiber.App) {
 	conts = cont
 	ProductsRoutes(app.Group("/products"))
+	CategoryRoutes(app.Group("/categories"))
 }

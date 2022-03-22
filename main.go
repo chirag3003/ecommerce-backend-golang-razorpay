@@ -5,6 +5,7 @@ import (
 	"github.com/chirag3003/ecommerce-golang-api/db"
 	"github.com/chirag3003/ecommerce-golang-api/routes"
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/logger"
 	"github.com/joho/godotenv"
 	"log"
 )
@@ -22,11 +23,13 @@ func main() {
 
 	//creating fiber app
 	app := fiber.New()
+	app.Use(logger.New())
 
 	//Setting Up Controllers
 
 	routes.NewRoutes(controllers.NewControllers(client), app)
 	app.Get("/", func(c *fiber.Ctx) error {
+
 		return c.SendString("Hello, World!")
 	})
 

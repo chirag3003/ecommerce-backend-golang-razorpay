@@ -1,3 +1,4 @@
 package config
 
-var PRODUCTS_COLLECTION = "products"
+const PRODUCTS_COLLECTION = "products"
+const CATEGORIES_COLLECTION = "categories"

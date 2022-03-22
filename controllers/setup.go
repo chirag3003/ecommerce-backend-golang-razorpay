@@ -7,13 +7,15 @@ import (
 var conn db.Connection
 
 type Controllers struct {
-	Products Products
+	Products   Products
+	Categories Categories
 }
 
 func NewControllers(conf db.Connection) *Controllers {
 	conn = conf
 	controllers := &Controllers{
-		Products: ProductsControllers(),
+		Products:   ProductsControllers(),
+		Categories: CategoryControllers(),
 	}
 	return controllers
 }
