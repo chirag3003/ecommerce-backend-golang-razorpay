@@ -1,8 +1,8 @@
 package controllers
 
 import (
-	"github.com/asaskevich/govalidator"
 	"github.com/chirag3003/ecommerce-golang-api/config"
+	"github.com/chirag3003/ecommerce-golang-api/helpers"
 	"github.com/chirag3003/ecommerce-golang-api/models"
 	"github.com/chirag3003/ecommerce-golang-api/repository"
 	"github.com/gofiber/fiber/v2"
@@ -31,8 +31,8 @@ func (u userRoutes) Register(ctx *fiber.Ctx) error {
 	if err != nil {
 		return ctx.SendStatus(fiber.StatusBadRequest)
 	}
-	if !govalidator.IsEmail(user.Email) {
-		return ctx.SendStatus(fiber.StatusBadRequest)
+	if inErr := helpers.ValidateUserRegisterInput(user); inErr != nil {
+		return ctx.Status(fiber.StatusBadRequest).JSON(inErr)
 	}
 	data, err := u.User.GetUser(user.Email)
 	if data != nil {
@@ -60,11 +60,26 @@ func (u userRoutes) Register(ctx *fiber.Ctx) error {
 }
 
 func (u userRoutes) Login(ctx *fiber.Ctx) error {
-	//TODO implement me
-	panic("implement me")
+	user := &models.User{}
+	err := ctx.BodyParser(user)
+	if err != nil {
+		return ctx.SendStatus(fiber.StatusBadRequest)
+	}
+	data, err := u.User.GetUser(user.Email)
+	if data == nil {
+		return ctx.SendStatus(fiber.StatusUnauthorized)
+	}
+	if !data.CheckPass(user.Password) {
+		return ctx.SendStatus(fiber.StatusUnauthorized)
+	}
+	jwt, err := data.GetJWT()
+	if err != nil {
+		return ctx.SendStatus(fiber.StatusInternalServerError)
+	}
+	return ctx.Status(fiber.StatusOK).SendString(jwt)
 }
 
 func (u userRoutes) Me(ctx *fiber.Ctx) error {
-	//TODO implement me
-	panic("implement me")
+	data := helpers.ParseUser(ctx).Response()
+	return ctx.JSON(data)
 }

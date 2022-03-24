@@ -9,22 +9,29 @@ import (
 )
 
 type User struct {
-	Id       primitive.ObjectID `json:"id,omitempty" bson:"id,omitempty"`
+	Id       primitive.ObjectID `json:"_id,omitempty" bson:"_id,omitempty"`
 	Name     string             `json:"name"`
 	Email    string             `json:"email"`
 	Password string             `json:"password"`
+}
+
+type UserResponse struct {
+	Id    primitive.ObjectID `json:"_id,omitempty" bson:"_id,omitempty"`
+	Name  string             `json:"name"`
+	Email string             `json:"email"`
 }
 
 func (user *User) GetJWT() (string, error) {
 	//Generating JWT token
 	token := jwt.New(jwt.SigningMethodHS256)
 	claims := token.Claims.(jwt.MapClaims)
-	claims["name"] = user.Email
-	claims["user_id"] = user.Id
+	claims["email"] = user.Email
+	claims["id"] = user.Id
 	claims["exp"] = time.Now().Add(time.Hour * 24 * 7).Unix()
 
 	//Getting encoded JWT token
 	t, err := token.SignedString([]byte(os.Getenv("SECRET")))
+
 	return t, err
 }
 
@@ -43,4 +50,13 @@ func (user *User) CreateHash(pass string) bool {
 	}
 	user.Password = string(hash)
 	return true
+}
+
+func (user *User) Response() *UserResponse {
+	response := &UserResponse{
+		Id:    user.Id,
+		Email: user.Email,
+		Name:  user.Name,
+	}
+	return response
 }

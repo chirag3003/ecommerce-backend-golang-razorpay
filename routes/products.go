@@ -1,14 +1,17 @@
 package routes
 
-import "github.com/gofiber/fiber/v2"
+import (
+	"github.com/chirag3003/ecommerce-golang-api/middlewares"
+	"github.com/gofiber/fiber/v2"
+)
 
 func ProductsRoutes(router fiber.Router) {
 
 	router.Get("/", conts.Products.FindAll)
 	router.Get("/:id", conts.Products.Find)
-	router.Post("/", conts.Products.Create)
-	router.Delete("/:id", conts.Products.Delete)
-	router.Patch("/:id", conts.Products.Publicity)
-	router.Put("/:id", conts.Products.Update)
+	router.Post("/", middlewares.IsAuthenticated, middlewares.IsAdmin, conts.Products.Create)
+	router.Delete("/:id", middlewares.IsAuthenticated, middlewares.IsAdmin, conts.Products.Delete)
+	router.Patch("/:id", middlewares.IsAuthenticated, middlewares.IsAdmin, conts.Products.Publicity)
+	router.Put("/:id", middlewares.IsAuthenticated, middlewares.IsAdmin, conts.Products.Update)
 
 }
