@@ -50,5 +50,5 @@ func ValidateUserRegisterInput(data *models.User) Errors {
 }
 
 func ParseUser(ctx *fiber.Ctx) *models.User {
-	return ctx.Locals("UserJWT").(*models.User)
+	return ctx.Locals("user").(*models.User)
 }
