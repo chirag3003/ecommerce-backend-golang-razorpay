@@ -11,7 +11,6 @@ type UserRepository interface {
 	Register(data *models.User) (*mongo.InsertOneResult, error)
 	Login(email, password string) (bool, error)
 	GetUser(email string) (*models.User, error)
-	Me(jwt string)
 }
 
 type userRepo struct {
@@ -19,7 +18,6 @@ type userRepo struct {
 }
 
 func (c userRepo) Register(data *models.User) (*mongo.InsertOneResult, error) {
-	//TODO implement me
 	one, err := c.db.InsertOne(context.TODO(), data)
 	if err != nil {
 		return nil, err
@@ -44,11 +42,6 @@ func (c userRepo) GetUser(email string) (*models.User, error) {
 	}
 	return data, nil
 
-}
-
-func (c userRepo) Me(jwt string) {
-	//TODO implement me
-	panic("implement me")
 }
 
 func NewUserRepository(col *mongo.Collection) UserRepository {

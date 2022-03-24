@@ -25,7 +25,7 @@ type userRoutes struct {
 	User repository.UserRepository
 }
 
-func (u userRoutes) Register(ctx *fiber.Ctx) error {
+func (u *userRoutes) Register(ctx *fiber.Ctx) error {
 	user := &models.User{}
 	err := ctx.BodyParser(user)
 	if err != nil {
@@ -59,7 +59,7 @@ func (u userRoutes) Register(ctx *fiber.Ctx) error {
 
 }
 
-func (u userRoutes) Login(ctx *fiber.Ctx) error {
+func (u *userRoutes) Login(ctx *fiber.Ctx) error {
 	user := &models.User{}
 	err := ctx.BodyParser(user)
 	if err != nil {
@@ -79,7 +79,7 @@ func (u userRoutes) Login(ctx *fiber.Ctx) error {
 	return ctx.Status(fiber.StatusOK).SendString(jwt)
 }
 
-func (u userRoutes) Me(ctx *fiber.Ctx) error {
+func (_ *userRoutes) Me(ctx *fiber.Ctx) error {
 	data := helpers.ParseUser(ctx).Response()
 	return ctx.JSON(data)
 }
