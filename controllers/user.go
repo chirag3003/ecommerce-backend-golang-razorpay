@@ -79,7 +79,7 @@ func (u *userRoutes) Login(ctx *fiber.Ctx) error {
 	return ctx.Status(fiber.StatusOK).SendString(jwt)
 }
 
-func (_ *userRoutes) Me(ctx *fiber.Ctx) error {
+func (*userRoutes) Me(ctx *fiber.Ctx) error {
 	data := helpers.ParseUser(ctx).Response()
 	return ctx.JSON(data)
 }
