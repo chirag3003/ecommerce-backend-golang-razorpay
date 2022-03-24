@@ -9,6 +9,7 @@ var conn db.Connection
 type Controllers struct {
 	Products   Products
 	Categories Categories
+	User       User
 }
 
 func NewControllers(conf db.Connection) *Controllers {
@@ -16,6 +17,7 @@ func NewControllers(conf db.Connection) *Controllers {
 	controllers := &Controllers{
 		Products:   ProductsControllers(),
 		Categories: CategoryControllers(),
+		User:       UserControllers(),
 	}
 	return controllers
 }

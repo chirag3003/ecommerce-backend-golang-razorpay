@@ -16,7 +16,7 @@ type CategoryRepository interface {
 	FindAll() ([]models.Category, error)
 	FindSubcategory(id string) (*models.Subcategory, error)
 	UpdateCategory(id string, data *models.CategoryUpdateInput) (*mongo.UpdateResult, error)
-	UpdateSubcategory(id string, data *models.Subcategory) (*mongo.UpdateResult, error)
+	UpdateSubcategory(id string, data *models.CategoryUpdateInput) (*mongo.UpdateResult, error)
 	DeleteCategory(id string) (*mongo.DeleteResult, error)
 	DeleteSubcategory(id string) (*mongo.UpdateResult, error)
 	ChangeVisibility(id string, p bool) (*mongo.UpdateResult, error)
@@ -102,20 +102,22 @@ func (c *categoryRepo) UpdateCategory(id string, data *models.CategoryUpdateInpu
 		return nil, err
 	}
 	byID, err := c.db.UpdateByID(context.TODO(), ID,
-		bson.D{{"$set", data}})
+		bson.M{"$set": data})
 	if err != nil {
+		fmt.Println(err)
 		return nil, err
 	}
 
 	return byID, nil
 }
-func (c *categoryRepo) UpdateSubcategory(id string, data *models.Subcategory) (*mongo.UpdateResult, error) {
+func (c *categoryRepo) UpdateSubcategory(id string, data *models.CategoryUpdateInput) (*mongo.UpdateResult, error) {
 	ID, err := primitive.ObjectIDFromHex(id)
 	if err != nil {
 		return nil, err
 	}
-	byID, err := c.db.UpdateByID(context.TODO(), ID,
-		bson.D{{"$set", data}})
+	data.ID = ID
+	byID, err := c.db.UpdateOne(context.TODO(), bson.M{"subcategories._id": ID},
+		bson.M{"$set": bson.M{"subcategories.$": data}})
 	if err != nil {
 		return nil, err
 	}
@@ -152,7 +154,6 @@ func (c *categoryRepo) ChangeVisibility(id string, p bool) (*mongo.UpdateResult,
 	byID, err := c.db.UpdateByID(context.TODO(), ID,
 		bson.D{{"$set", bson.D{{"public", p}}}})
 	if err != nil {
-		fmt.Println(err)
 		return nil, err
 	}
 

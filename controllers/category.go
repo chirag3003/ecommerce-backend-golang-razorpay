@@ -117,7 +117,7 @@ func (c *categoryRoutes) UpdateCategory(ctx *fiber.Ctx) error {
 	return ctx.JSON(data)
 }
 func (c *categoryRoutes) UpdateSubcategory(ctx *fiber.Ctx) error {
-	body := &models.Subcategory{}
+	body := &models.CategoryUpdateInput{}
 	err := ctx.BodyParser(body)
 	if err != nil {
 		return ctx.SendStatus(fiber.StatusBadRequest)

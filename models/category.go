@@ -34,7 +34,8 @@ func (d *Subcategory) SetDefaults() {
 }
 
 type CategoryUpdateInput struct {
-	Title       string   `json:"title,omitempty"`       //Title  of the category
-	Description string   `json:"description,omitempty"` //Description The category
-	Tags        []string `json:"tags,omitempty"`
+	ID          primitive.ObjectID `bson:"_id,omitempty"`
+	Title       string             `bson:"title,omitempty"`       //Title  of the category
+	Description string             `bson:"description,omitempty"` //Description The category
+	Tags        []string           `bson:"tags,omitempty"`
 }
