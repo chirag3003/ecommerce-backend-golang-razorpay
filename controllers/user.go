@@ -34,7 +34,7 @@ func (u userRoutes) Register(ctx *fiber.Ctx) error {
 	if inErr := helpers.ValidateUserRegisterInput(user); inErr != nil {
 		return ctx.Status(fiber.StatusBadRequest).JSON(inErr)
 	}
-	data, err := u.User.GetUser(user.Email)
+	data, _ := u.User.GetUser(user.Email)
 	if data != nil {
 		return ctx.Status(fiber.StatusBadRequest).SendString("already exists")
 	}
@@ -65,7 +65,7 @@ func (u userRoutes) Login(ctx *fiber.Ctx) error {
 	if err != nil {
 		return ctx.SendStatus(fiber.StatusBadRequest)
 	}
-	data, err := u.User.GetUser(user.Email)
+	data, _ := u.User.GetUser(user.Email)
 	if data == nil {
 		return ctx.SendStatus(fiber.StatusUnauthorized)
 	}
