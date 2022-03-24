@@ -16,12 +16,12 @@ func validateSignedMethod(token *jwt.Token) (interface{}, error) {
 	return []byte(os.Getenv("SECRET")), nil
 }
 
-type user struct {
+type UserJWT struct {
 	ID    string
 	Email string
 }
 
-func VerifyJWT(tokenString string) (bool, *user) {
+func VerifyJWT(tokenString string) (bool, *UserJWT) {
 	token := jwt.New(jwt.SigningMethodHS256)
 	claims := token.Claims.(jwt.MapClaims)
 	_, err := jwt.ParseWithClaims(tokenString, claims, validateSignedMethod)
@@ -31,7 +31,7 @@ func VerifyJWT(tokenString string) (bool, *user) {
 	email := claims["email"].(string)
 	id := claims["id"].(string)
 
-	return true, &user{
+	return true, &UserJWT{
 		Email: email,
 		ID:    id,
 	}
@@ -50,5 +50,5 @@ func ValidateUserRegisterInput(data *models.User) Errors {
 }
 
 func ParseUser(ctx *fiber.Ctx) *models.User {
-	return ctx.Locals("user").(*models.User)
+	return ctx.Locals("UserJWT").(*models.User)
 }
