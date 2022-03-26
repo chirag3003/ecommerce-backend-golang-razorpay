@@ -7,12 +7,14 @@ import (
 	"github.com/chirag3003/ecommerce-golang-api/repository"
 	"github.com/gofiber/fiber/v2"
 	"go.mongodb.org/mongo-driver/bson/primitive"
+	"strings"
 )
 
 type User interface {
 	Register(ctx *fiber.Ctx) error
 	Login(ctx *fiber.Ctx) error
 	Me(ctx *fiber.Ctx) error
+	UpdateName(ctx *fiber.Ctx) error
 }
 
 func UserControllers() User {
@@ -41,7 +43,8 @@ func (u *userRoutes) Register(ctx *fiber.Ctx) error {
 	if !user.CreateHash(user.Password) {
 		return ctx.SendStatus(fiber.StatusBadRequest)
 	}
-
+	user.SetCreatedAt()
+	user.SetUpdatedAt()
 	res, err := u.User.Register(user)
 	if err != nil {
 		return err
@@ -50,7 +53,7 @@ func (u *userRoutes) Register(ctx *fiber.Ctx) error {
 	if !ok {
 		return ctx.SendStatus(fiber.StatusInternalServerError)
 	}
-	user.Id = id
+	user.ID = id
 	jwt, err := user.GetJWT()
 	if err != nil {
 		return ctx.SendStatus(fiber.StatusInternalServerError)
@@ -82,4 +85,17 @@ func (u *userRoutes) Login(ctx *fiber.Ctx) error {
 func (*userRoutes) Me(ctx *fiber.Ctx) error {
 	data := helpers.ParseUser(ctx).Response()
 	return ctx.JSON(data)
+}
+
+func (u *userRoutes) UpdateName(ctx *fiber.Ctx) error {
+	user := helpers.ParseUser(ctx)
+	name := ctx.FormValue("name")
+	if strings.TrimSpace(name) == "" {
+		return ctx.SendStatus(fiber.StatusBadRequest)
+	}
+	result, err := u.User.UpdateName(name, user.ID)
+	if err != nil {
+		return ctx.SendStatus(fiber.StatusInternalServerError)
+	}
+	return ctx.JSON(result)
 }

@@ -9,16 +9,31 @@ import (
 )
 
 type User struct {
-	Id       primitive.ObjectID `json:"_id,omitempty" bson:"_id,omitempty"`
-	Name     string             `json:"name"`
-	Email    string             `json:"email"`
-	Password string             `json:"password"`
+	ID        primitive.ObjectID `json:"_id,omitempty" bson:"_id,omitempty"`
+	Name      string             `json:"name"`
+	Email     string             `json:"email"`
+	Password  string             `json:"password"`
+	Address   []UserAddress      `json:"address"`
+	CreatedAt int64              `json:"createdAt"`
+	UpdatedAt int64              `json:"updatedAt"`
 }
 
 type UserResponse struct {
-	Id    primitive.ObjectID `json:"_id,omitempty" bson:"_id,omitempty"`
+	ID    primitive.ObjectID `json:"_id,omitempty" bson:"_id,omitempty"`
 	Name  string             `json:"name"`
 	Email string             `json:"email"`
+}
+
+type UserAddress struct {
+	ID           primitive.ObjectID `json:"_id,omitempty" bson:"_id,omitempty"`
+	UserID       primitive.ObjectID `json:"userID"`
+	Name         string             `json:"name"`
+	PhoneNo      int64              `json:"phoneNo"`
+	AddressLine1 string             `json:"addressLine1"`
+	AddressLine2 string             `json:"addressLine2"`
+	Country      string             `json:"country"`
+	City         string             `json:"city"`
+	Zipcode      string             `json:"zipcode"`
 }
 
 func (user *User) GetJWT() (string, error) {
@@ -26,13 +41,22 @@ func (user *User) GetJWT() (string, error) {
 	token := jwt.New(jwt.SigningMethodHS256)
 	claims := token.Claims.(jwt.MapClaims)
 	claims["email"] = user.Email
-	claims["id"] = user.Id
+	claims["id"] = user.ID
 	claims["exp"] = time.Now().Add(time.Hour * 24 * 7).Unix()
+	claims["iat"] = time.Now().Unix()
 
 	//Getting encoded JWT token
 	t, err := token.SignedString([]byte(os.Getenv("SECRET")))
 
 	return t, err
+}
+
+func (user *User) SetCreatedAt() {
+	user.CreatedAt = time.Now().Unix()
+}
+
+func (user *User) SetUpdatedAt() {
+	user.UpdatedAt = time.Now().Unix()
 }
 
 func (user *User) CheckPass(pass string) bool {
@@ -54,7 +78,7 @@ func (user *User) CreateHash(pass string) bool {
 
 func (user *User) Response() *UserResponse {
 	response := &UserResponse{
-		Id:    user.Id,
+		ID:    user.ID,
 		Email: user.Email,
 		Name:  user.Name,
 	}

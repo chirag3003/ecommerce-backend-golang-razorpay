@@ -9,4 +9,5 @@ func UserRoutes(router fiber.Router) {
 	router.Post("/login", conts.User.Login)
 	router.Post("/register", conts.User.Register)
 	router.Get("/me", middlewares.IsAuthenticated, conts.User.Me)
+	router.Patch("/name", middlewares.IsAuthenticated, conts.User.UpdateName)
 }

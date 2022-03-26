@@ -22,11 +22,11 @@ func IsAuthenticated(ctx *fiber.Ctx) error {
 	if err != nil {
 		return ctx.SendStatus(fiber.StatusUnauthorized)
 	}
-	err = UserDB.FindOne(context.TODO(), bson.M{"_id": ID, "email": user.Email}).Decode(data)
-	if err != nil {
+	_ = UserDB.FindOne(context.TODO(), bson.M{"_id": ID, "email": user.Email}).Decode(data)
+	if data == nil {
 		return ctx.SendStatus(fiber.StatusUnauthorized)
 	}
-	if data == nil {
+	if float64(data.UpdatedAt) > user.Iat {
 		return ctx.SendStatus(fiber.StatusUnauthorized)
 	}
 	ctx.Locals("user", data)
