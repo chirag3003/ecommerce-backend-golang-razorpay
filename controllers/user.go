@@ -1,7 +1,7 @@
 package controllers
 
 import (
-	"github.com/chirag3003/ecommerce-golang-api/config"
+	"fmt"
 	"github.com/chirag3003/ecommerce-golang-api/helpers"
 	"github.com/chirag3003/ecommerce-golang-api/models"
 	"github.com/chirag3003/ecommerce-golang-api/repository"
@@ -15,11 +15,13 @@ type User interface {
 	Login(ctx *fiber.Ctx) error
 	Me(ctx *fiber.Ctx) error
 	UpdateName(ctx *fiber.Ctx) error
+	AddAddress(ctx *fiber.Ctx) error
+	GetAddresses(ctx *fiber.Ctx) error
 }
 
 func UserControllers() User {
 	return &userRoutes{
-		User: repository.NewUserRepository(conn.DB().Collection(config.USER_COLLECTION)),
+		User: repository.NewUserRepository(conn.DB()),
 	}
 }
 
@@ -43,8 +45,7 @@ func (u *userRoutes) Register(ctx *fiber.Ctx) error {
 	if !user.CreateHash(user.Password) {
 		return ctx.SendStatus(fiber.StatusBadRequest)
 	}
-	user.SetCreatedAt()
-	user.SetUpdatedAt()
+	user.SetCreateDefaults()
 	res, err := u.User.Register(user)
 	if err != nil {
 		return err
@@ -98,4 +99,30 @@ func (u *userRoutes) UpdateName(ctx *fiber.Ctx) error {
 		return ctx.SendStatus(fiber.StatusInternalServerError)
 	}
 	return ctx.JSON(result)
+}
+
+func (u *userRoutes) AddAddress(ctx *fiber.Ctx) error {
+	user := helpers.ParseUser(ctx)
+	address := &models.UserAddress{}
+	err := ctx.BodyParser(address)
+	if err != nil {
+		return ctx.SendStatus(fiber.StatusBadRequest)
+	}
+	addAddress, err := u.User.AddAddress(user.ID, address)
+	if err != nil {
+		return ctx.SendStatus(fiber.StatusBadRequest)
+	}
+
+	return ctx.JSON(addAddress)
+}
+
+func (u *userRoutes) GetAddresses(ctx *fiber.Ctx) error {
+	user := helpers.ParseUser(ctx)
+
+	addresses, err := u.User.GetAddresses(user.ID)
+	if err != nil {
+		fmt.Println(err)
+		return ctx.SendStatus(fiber.StatusBadRequest)
+	}
+	return ctx.JSON(addresses)
 }

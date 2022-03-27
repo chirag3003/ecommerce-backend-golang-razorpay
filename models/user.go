@@ -9,13 +9,13 @@ import (
 )
 
 type User struct {
-	ID        primitive.ObjectID `json:"_id,omitempty" bson:"_id,omitempty"`
-	Name      string             `json:"name"`
-	Email     string             `json:"email"`
-	Password  string             `json:"password"`
-	Address   []UserAddress      `json:"address"`
-	CreatedAt int64              `json:"createdAt"`
-	UpdatedAt int64              `json:"updatedAt"`
+	ID        primitive.ObjectID   `json:"_id,omitempty" bson:"_id,omitempty"`
+	Name      string               `json:"name"`
+	Email     string               `json:"email"`
+	Password  string               `json:"password"`
+	Address   []primitive.ObjectID `json:"address,omitempty"`
+	CreatedAt int64                `json:"createdAt"`
+	UpdatedAt int64                `json:"updatedAt"`
 }
 
 type UserResponse struct {
@@ -57,6 +57,12 @@ func (user *User) SetCreatedAt() {
 
 func (user *User) SetUpdatedAt() {
 	user.UpdatedAt = time.Now().Unix()
+}
+
+func (user *User) SetCreateDefaults() {
+	user.SetUpdatedAt()
+	user.SetCreatedAt()
+	user.Address = []primitive.ObjectID{}
 }
 
 func (user *User) CheckPass(pass string) bool {
