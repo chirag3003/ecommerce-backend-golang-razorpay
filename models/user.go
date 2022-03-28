@@ -24,18 +24,6 @@ type UserResponse struct {
 	Email string             `json:"email"`
 }
 
-type UserAddress struct {
-	ID           primitive.ObjectID `json:"_id,omitempty" bson:"_id,omitempty"`
-	UserID       primitive.ObjectID `json:"userID"`
-	Name         string             `json:"name"`
-	PhoneNo      int64              `json:"phoneNo"`
-	AddressLine1 string             `json:"addressLine1"`
-	AddressLine2 string             `json:"addressLine2"`
-	Country      string             `json:"country"`
-	City         string             `json:"city"`
-	Zipcode      string             `json:"zipcode"`
-}
-
 func (user *User) GetJWT() (string, error) {
 	//Generating JWT token
 	token := jwt.New(jwt.SigningMethodHS256)

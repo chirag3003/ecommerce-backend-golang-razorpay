@@ -16,6 +16,7 @@ type UserRepository interface {
 	UpdateName(name string, id primitive.ObjectID) (*mongo.UpdateResult, error)
 	AddAddress(ID primitive.ObjectID, data *models.UserAddress) (*mongo.InsertOneResult, error)
 	GetAddresses(id primitive.ObjectID) (*[]models.UserAddress, error)
+	UpdateAddress(userID primitive.ObjectID, id string, address *models.UserAddressInput) (*mongo.UpdateResult, error)
 }
 
 func NewUserRepository(col *mongo.Database) UserRepository {
@@ -81,7 +82,7 @@ func (c userRepo) AddAddress(ID primitive.ObjectID, data *models.UserAddress) (*
 }
 
 func (c userRepo) GetAddresses(id primitive.ObjectID) (*[]models.UserAddress, error) {
-	find, err := c.Address.Find(context.TODO(), bson.M{"userid": id})
+	find, err := c.Address.Find(context.TODO(), bson.M{"userID": id})
 	if err != nil {
 		return nil, err
 	}
@@ -90,5 +91,19 @@ func (c userRepo) GetAddresses(id primitive.ObjectID) (*[]models.UserAddress, er
 	if err != nil {
 		return nil, err
 	}
+	return data, nil
+}
+
+func (c userRepo) UpdateAddress(userID primitive.ObjectID, id string, address *models.UserAddressInput) (*mongo.UpdateResult, error) {
+	ID, err := primitive.ObjectIDFromHex(id)
+	if err != nil {
+		return nil, err
+	}
+
+	data, err := c.Address.UpdateByID(context.TODO(), bson.M{"_id": ID, "userID": userID}, bson.M{"$set": address})
+	if err != nil {
+		return nil, err
+	}
+
 	return data, nil
 }

@@ -17,6 +17,7 @@ type User interface {
 	UpdateName(ctx *fiber.Ctx) error
 	AddAddress(ctx *fiber.Ctx) error
 	GetAddresses(ctx *fiber.Ctx) error
+	UpdateAddress(ctx *fiber.Ctx) error
 }
 
 func UserControllers() User {
@@ -118,11 +119,26 @@ func (u *userRoutes) AddAddress(ctx *fiber.Ctx) error {
 
 func (u *userRoutes) GetAddresses(ctx *fiber.Ctx) error {
 	user := helpers.ParseUser(ctx)
-
 	addresses, err := u.User.GetAddresses(user.ID)
 	if err != nil {
 		fmt.Println(err)
 		return ctx.SendStatus(fiber.StatusBadRequest)
 	}
 	return ctx.JSON(addresses)
+}
+
+func (u *userRoutes) UpdateAddress(ctx *fiber.Ctx) error {
+	user := helpers.ParseUser(ctx)
+	ID := ctx.Params("id")
+	body := &models.UserAddressInput{}
+	err := ctx.BodyParser(body)
+	if err != nil {
+		return ctx.SendStatus(fiber.StatusBadRequest)
+	}
+
+	response, err := u.User.UpdateAddress(user.ID, ID, body)
+	if err != nil {
+		return err
+	}
+	return ctx.JSON(response)
 }

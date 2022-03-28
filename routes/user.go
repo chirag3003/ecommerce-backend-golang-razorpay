@@ -12,4 +12,5 @@ func UserRoutes(router fiber.Router) {
 	router.Get("/me", middlewares.IsAuthenticated, conts.User.Me)
 	router.Get("/address", middlewares.IsAuthenticated, conts.User.GetAddresses)
 	router.Patch("/name", middlewares.IsAuthenticated, conts.User.UpdateName)
+	router.Put("/address/:id", middlewares.IsAuthenticated, conts.User.UpdateAddress)
 }

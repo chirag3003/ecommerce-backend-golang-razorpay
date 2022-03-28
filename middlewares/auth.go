@@ -22,8 +22,8 @@ func IsAuthenticated(ctx *fiber.Ctx) error {
 	if err != nil {
 		return ctx.SendStatus(fiber.StatusUnauthorized)
 	}
-	_ = UserDB.FindOne(context.TODO(), bson.M{"_id": ID, "email": user.Email}).Decode(data)
-	if data == nil {
+	err = UserDB.FindOne(context.TODO(), bson.M{"_id": ID, "email": user.Email}).Decode(data)
+	if data == nil || err != nil {
 		return ctx.SendStatus(fiber.StatusUnauthorized)
 	}
 	if float64(data.UpdatedAt) > user.Iat {
