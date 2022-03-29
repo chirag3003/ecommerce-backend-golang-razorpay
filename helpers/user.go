@@ -19,7 +19,7 @@ func validateSignedMethod(token *jwt.Token) (interface{}, error) {
 type UserJWT struct {
 	ID    string
 	Email string
-	Iat   float64
+	Iat   int64
 }
 
 func VerifyJWT(tokenString string) (bool, *UserJWT) {
@@ -29,9 +29,18 @@ func VerifyJWT(tokenString string) (bool, *UserJWT) {
 	if err != nil {
 		return false, nil
 	}
-	email := claims["email"].(string)
-	id := claims["id"].(string)
-	iat := claims["iat"].(float64)
+	email, ok := claims["email"].(string)
+	if !ok {
+		return false, nil
+	}
+	id, ok := claims["id"].(string)
+	if !ok {
+		return false, nil
+	}
+	iat, ok := claims["iat"].(int64)
+	if !ok {
+		return false, nil
+	}
 
 	return true, &UserJWT{
 		Email: email,

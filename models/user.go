@@ -1,7 +1,6 @@
 package models
 
 import (
-	"fmt"
 	"github.com/golang-jwt/jwt"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"golang.org/x/crypto/bcrypt"
@@ -32,8 +31,6 @@ func (user *User) GetJWT() (string, error) {
 	claims["id"] = user.ID
 	claims["exp"] = time.Now().Add(time.Hour * 24 * 7).Unix()
 	claims["iat"] = time.Now().Unix()
-	fmt.Println(claims)
-
 	//Getting encoded JWT token
 	t, err := token.SignedString([]byte(os.Getenv("SECRET")))
 
