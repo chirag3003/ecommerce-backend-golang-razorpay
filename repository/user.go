@@ -72,12 +72,6 @@ func (c userRepo) AddAddress(ID primitive.ObjectID, data *models.UserAddress) (*
 	if err != nil {
 		return nil, err
 	}
-
-	objectID := result.InsertedID.(primitive.ObjectID)
-	_, err = c.User.UpdateByID(context.TODO(), ID, bson.M{"$push": bson.M{"address": objectID}})
-	if err != nil {
-		return nil, err
-	}
 	return result, nil
 }
 

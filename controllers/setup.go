@@ -10,6 +10,7 @@ type Controllers struct {
 	Products   Products
 	Categories Categories
 	User       User
+	Order      Order
 }
 
 func NewControllers(conf db.Connection) *Controllers {
@@ -18,6 +19,7 @@ func NewControllers(conf db.Connection) *Controllers {
 		Products:   ProductsControllers(),
 		Categories: CategoryControllers(),
 		User:       UserControllers(),
+		Order:      OrderControllers(),
 	}
 	return controllers
 }

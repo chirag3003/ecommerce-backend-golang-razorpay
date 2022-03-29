@@ -1,6 +1,7 @@
 package models
 
 import (
+	"fmt"
 	"github.com/golang-jwt/jwt"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"golang.org/x/crypto/bcrypt"
@@ -9,13 +10,12 @@ import (
 )
 
 type User struct {
-	ID        primitive.ObjectID   `json:"_id,omitempty" bson:"_id,omitempty"`
-	Name      string               `json:"name"`
-	Email     string               `json:"email"`
-	Password  string               `json:"password"`
-	Address   []primitive.ObjectID `json:"address,omitempty"`
-	CreatedAt int64                `json:"createdAt"`
-	UpdatedAt int64                `json:"updatedAt"`
+	ID        primitive.ObjectID `json:"_id,omitempty" bson:"_id,omitempty"`
+	Name      string             `json:"name"`
+	Email     string             `json:"email"`
+	Password  string             `json:"password"`
+	CreatedAt int64              `json:"createdAt" bson:"createdAt"`
+	UpdatedAt int64              `json:"updatedAt" bson:"updatedAt"`
 }
 
 type UserResponse struct {
@@ -32,6 +32,7 @@ func (user *User) GetJWT() (string, error) {
 	claims["id"] = user.ID
 	claims["exp"] = time.Now().Add(time.Hour * 24 * 7).Unix()
 	claims["iat"] = time.Now().Unix()
+	fmt.Println(claims)
 
 	//Getting encoded JWT token
 	t, err := token.SignedString([]byte(os.Getenv("SECRET")))
@@ -50,7 +51,6 @@ func (user *User) SetUpdatedAt() {
 func (user *User) SetCreateDefaults() {
 	user.SetUpdatedAt()
 	user.SetCreatedAt()
-	user.Address = []primitive.ObjectID{}
 }
 
 func (user *User) CheckPass(pass string) bool {
