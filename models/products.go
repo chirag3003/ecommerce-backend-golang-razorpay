@@ -10,6 +10,7 @@ type ProductsModel struct {
 	Price       float64            `json:"price"`                              //Price of the Product
 	Discount    float64            `json:"discount"`                           //Discount on the product in percent
 	Tags        []string           `json:"tags"`                               //Tags The tags associated with the products which helps in better search results
+	Collection  []string           `json:"collection"`                         //Collection : The collections the product is part of (eg: New Collections, Trending)
 	Category    string             `json:"category"`                           //Category The category of the product
 	Subcategory string             `json:"subcategory"`                        //Subcategory The SubCategory of the products
 	Slug        string             `json:"slug"`                               //Slug of the product which shows on the url
@@ -20,6 +21,9 @@ type ProductsModel struct {
 func (p *ProductsModel) SetDefaults() {
 	if p.Tags == nil {
 		p.Tags = []string{}
+	}
+	if p.Collection == nil {
+		p.Collection = []string{}
 	}
 	p.Public = false
 }
