@@ -19,8 +19,8 @@ type Order struct {
 }
 
 type OrderProduct struct {
-	ProductID primitive.ObjectID `json:"productID" bson:"productID"`
-	Quantity  primitive.ObjectID `json:"quantity" bson:"quantity"`
+	Product  ProductsModel      `json:"productID" bson:"productID"`
+	Quantity primitive.ObjectID `json:"quantity" bson:"quantity"`
 }
 
 func (o *Order) SetCreatedAt() {
