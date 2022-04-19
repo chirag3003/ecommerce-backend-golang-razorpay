@@ -14,7 +14,7 @@ func ConnectS3() *session.Session {
 	sess, err := session.NewSession(
 
 		&aws.Config{
-			Endpoint: aws.String("s3.ap-northeast-2.wasabisys.com"),
+			Endpoint: aws.String(os.Getenv("S3_ENDPOINT")),
 			Region:   aws.String(s3Region),
 			Credentials: credentials.NewStaticCredentials(
 				s3AccessKey,

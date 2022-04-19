@@ -9,8 +9,10 @@ import (
 	"github.com/chirag3003/ecommerce-golang-api/repository"
 	"github.com/gofiber/fiber/v2"
 	"log"
+	"math/rand"
 	"os"
 	"strings"
+	"time"
 )
 
 type Images interface {
@@ -43,29 +45,29 @@ func (i imagesRoutes) Upload(ctx *fiber.Ctx) error {
 		if !strings.HasPrefix(file.Header["Content-Type"][0], "image/") {
 			return ctx.Status(fiber.StatusBadRequest).JSON("file type not supported")
 		}
-		fmt.Println(file.Filename)
+		rand.Seed(time.Now().Unix())
+		name := fmt.Sprintf("%d%s", rand.Int(), file.Filename)
 		open, err := file.Open()
 
 		if err != nil {
 			return err
 		}
-		_, err = uploader.Upload(&s3manager.UploadInput{
+		res, err := uploader.Upload(&s3manager.UploadInput{
 			Bucket: aws.String(os.Getenv("S3_BUCKET")),
 			ACL:    aws.String("public-read"),
-			Key:    aws.String(fmt.Sprintf("images/%d%s", i, file.Filename)),
+			Key:    aws.String(fmt.Sprintf("images/%d%s", i, name)),
 			Body:   open,
 		})
+		fmt.Println(res.Location)
 		if err != nil {
 			log.Println(err)
 			return err
 		}
-
 		err = open.Close()
 		if err != nil {
 			return err
 		}
 
 	}
-
 	return ctx.SendStatus(200)
 }
