@@ -6,13 +6,14 @@ import (
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/s3/s3manager"
 	"github.com/chirag3003/ecommerce-golang-api/helpers"
+	"github.com/chirag3003/ecommerce-golang-api/models"
 	"github.com/chirag3003/ecommerce-golang-api/repository"
 	"github.com/gofiber/fiber/v2"
+	gonanoid "github.com/matoous/go-nanoid/v2"
 	"log"
-	"math/rand"
 	"os"
+	"path/filepath"
 	"strings"
-	"time"
 )
 
 type Images interface {
@@ -31,7 +32,7 @@ type imagesRoutes struct {
 	awsSession *session.Session
 }
 
-func (i imagesRoutes) Upload(ctx *fiber.Ctx) error {
+func (i *imagesRoutes) Upload(ctx *fiber.Ctx) error {
 
 	uploader := s3manager.NewUploader(i.awsSession)
 
@@ -42,12 +43,15 @@ func (i imagesRoutes) Upload(ctx *fiber.Ctx) error {
 	}
 	files := form.File["images"]
 	var imageUrl []string
-	for i, file := range files {
+	for _, file := range files {
 		if !strings.HasPrefix(file.Header["Content-Type"][0], "image/") {
 			return ctx.Status(fiber.StatusBadRequest).JSON("file type not supported")
 		}
-		rand.Seed(time.Now().Unix())
-		name := fmt.Sprintf("%d%s", rand.Int(), file.Filename)
+		id, err := gonanoid.New(30)
+		if err != nil {
+			return ctx.SendStatus(fiber.StatusInternalServerError)
+		}
+		name := fmt.Sprintf("%s%s", id, filepath.Ext(file.Filename))
 		open, err := file.Open()
 
 		if err != nil {
@@ -56,10 +60,15 @@ func (i imagesRoutes) Upload(ctx *fiber.Ctx) error {
 		res, err := uploader.Upload(&s3manager.UploadInput{
 			Bucket: aws.String(os.Getenv("S3_BUCKET")),
 			ACL:    aws.String("public-read"),
-			Key:    aws.String(fmt.Sprintf("images/%d%s", i, name)),
+			Key:    aws.String(fmt.Sprintf("images/%s", name)),
 			Body:   open,
 		})
 		imageUrl = append(imageUrl, res.Location)
+		_, _ = i.Images.NewImage(models.Image{
+			Src: res.Location,
+			Key: fmt.Sprintf("images/%s", name),
+		})
+
 		if err != nil {
 			log.Println(err)
 			return err
@@ -70,5 +79,6 @@ func (i imagesRoutes) Upload(ctx *fiber.Ctx) error {
 		}
 
 	}
+
 	return ctx.Status(fiber.StatusOK).JSON(imageUrl)
 }
