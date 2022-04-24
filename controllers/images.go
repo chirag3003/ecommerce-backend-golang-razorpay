@@ -41,6 +41,7 @@ func (i imagesRoutes) Upload(ctx *fiber.Ctx) error {
 		return err
 	}
 	files := form.File["images"]
+	var imageUrl []string
 	for i, file := range files {
 		if !strings.HasPrefix(file.Header["Content-Type"][0], "image/") {
 			return ctx.Status(fiber.StatusBadRequest).JSON("file type not supported")
@@ -58,16 +59,16 @@ func (i imagesRoutes) Upload(ctx *fiber.Ctx) error {
 			Key:    aws.String(fmt.Sprintf("images/%d%s", i, name)),
 			Body:   open,
 		})
-		fmt.Println(res.Location)
+		imageUrl = append(imageUrl, res.Location)
 		if err != nil {
 			log.Println(err)
 			return err
 		}
 		err = open.Close()
 		if err != nil {
-			return err
+			return ctx.SendStatus(fiber.StatusInternalServerError)
 		}
 
 	}
-	return ctx.SendStatus(200)
+	return ctx.Status(fiber.StatusOK).JSON(imageUrl)
 }

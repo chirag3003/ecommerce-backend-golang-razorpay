@@ -7,14 +7,20 @@ import (
 )
 
 func VerifyENV() {
-	variables := make(map[string]string)
-	variables["MONGO_URI"] = os.Getenv("MONGO_URI")
-	variables["SECRET"] = os.Getenv("SECRET")
-	variables["S3_ACCESS_KEY"] = os.Getenv("S3_ACCESS_KEY")
-	variables["S3_SECRET_KEY"] = os.Getenv("S3_SECRET_KEY")
+	variables := []string{
+		"PORT",
+		"MONGO_URI",
+		"SECRET",
+		"S3_ACCESS_KEY",
+		"S3_SECRET_KEY",
+		"S3_REGION",
+		"S3_BUCKET",
+		"S3_ENDPOINT",
+	}
+
 	err := false
-	for field := range variables {
-		if variables[field] == "" {
+	for _, field := range variables {
+		if os.Getenv(field) == "" {
 			err = true
 			fmt.Println("Set a value for the environment variable: ", field)
 		}
