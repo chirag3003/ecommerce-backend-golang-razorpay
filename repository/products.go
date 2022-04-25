@@ -10,7 +10,8 @@ import (
 
 type ProductsRepository interface {
 	Save(model *models.ProductsModel) (*mongo.InsertOneResult, error)
-	Find(string) (*models.ProductsModel, error)
+	FindByID(string) (*models.ProductsModel, error)
+	Find(slug string) (*models.ProductsModel, error)
 	FindAll() ([]models.ProductsModel, error)
 	Delete(string) (*mongo.DeleteResult, error)
 	ChangeVisibility(id string, p bool) (*mongo.UpdateResult, error)
@@ -35,7 +36,7 @@ func (c *productRepo) Save(data *models.ProductsModel) (*mongo.InsertOneResult, 
 
 	return one, nil
 }
-func (c *productRepo) Find(id string) (*models.ProductsModel, error) {
+func (c *productRepo) FindByID(id string) (*models.ProductsModel, error) {
 	ID, err := primitive.ObjectIDFromHex(id)
 	if err != nil {
 		return nil, err
@@ -43,6 +44,15 @@ func (c *productRepo) Find(id string) (*models.ProductsModel, error) {
 	find := c.db.FindOne(context.TODO(), bson.M{"_id": ID})
 	data := &models.ProductsModel{}
 	err = find.Decode(data)
+	if err != nil {
+		return nil, err
+	}
+	return data, nil
+}
+func (c *productRepo) Find(slug string) (*models.ProductsModel, error) {
+	find := c.db.FindOne(context.TODO(), bson.M{"slug": slug})
+	data := &models.ProductsModel{}
+	err := find.Decode(data)
 	if err != nil {
 		return nil, err
 	}

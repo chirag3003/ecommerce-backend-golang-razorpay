@@ -26,9 +26,7 @@ func IsAuthenticated(ctx *fiber.Ctx) error {
 	if data == nil || err != nil {
 		return ctx.SendStatus(fiber.StatusUnauthorized)
 	}
-	if data.UpdatedAt > user.Iat {
-		return ctx.SendStatus(fiber.StatusUnauthorized)
-	}
+
 	ctx.Locals("user", data)
 	return ctx.Next()
 }

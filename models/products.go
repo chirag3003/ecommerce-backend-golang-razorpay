@@ -7,6 +7,7 @@ type ProductsModel struct {
 	ID          primitive.ObjectID `json:"_id,omitempty" bson:"_id,omitempty"` //ID: The Doc id of mongodb
 	Title       string             `json:"title"`                              //Title  of the Product
 	Description string             `json:"description"`                        //Description The Product Description
+	Images      []string           `json:"images"`                             //Images of the product
 	Price       float64            `json:"price"`                              //Price of the Product
 	Discount    float64            `json:"discount"`                           //Discount on the product in percent
 	Tags        []string           `json:"tags"`                               //Tags The tags associated with the products which helps in better search results
@@ -24,6 +25,9 @@ func (p *ProductsModel) SetDefaults() {
 	}
 	if p.Collection == nil {
 		p.Collection = []string{}
+	}
+	if p.Images == nil {
+		p.Images = []string{}
 	}
 	p.Public = false
 }

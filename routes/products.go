@@ -8,7 +8,7 @@ import (
 func ProductsRoutes(router fiber.Router) {
 
 	router.Get("/", conts.Products.FindAll)
-	router.Get("/:id", conts.Products.Find)
+	router.Get("/:slug", conts.Products.Find)
 	router.Post("/", middlewares.IsAuthenticated, middlewares.IsAdmin, conts.Products.Create)
 	router.Delete("/:id", middlewares.IsAuthenticated, middlewares.IsAdmin, conts.Products.Delete)
 	router.Patch("/:id", middlewares.IsAuthenticated, middlewares.IsAdmin, conts.Products.Publicity)

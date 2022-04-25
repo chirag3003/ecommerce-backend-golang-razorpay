@@ -50,6 +50,12 @@ func (c *productRoutes) Create(ctx *fiber.Ctx) error {
 		return ctx.Status(fiber.StatusBadRequest).JSON(inputError)
 	}
 
+	//validating slug
+	find, _ := c.Products.Find(body.Slug)
+	if find != nil {
+		return ctx.Status(fiber.StatusBadRequest).SendString("slug already in use")
+	}
+
 	//setting default values for some fields
 	body.SetDefaults()
 
@@ -70,8 +76,8 @@ func (c *productRoutes) Create(ctx *fiber.Ctx) error {
 }
 
 func (c *productRoutes) Find(ctx *fiber.Ctx) error {
-	id := ctx.Params("id")
-	data, err := c.Products.Find(id)
+	slug := ctx.Params("slug")
+	data, err := c.Products.Find(slug)
 	if err != nil {
 		return ctx.SendStatus(fiber.StatusNotFound)
 	}
@@ -99,7 +105,7 @@ func (c *productRoutes) Publicity(ctx *fiber.Ctx) error {
 		return ctx.SendStatus(fiber.StatusBadRequest)
 	}
 
-	find, err := c.Products.Find(id)
+	find, err := c.Products.FindByID(id)
 	if err != nil {
 		return ctx.SendStatus(fiber.StatusNotFound)
 	}
