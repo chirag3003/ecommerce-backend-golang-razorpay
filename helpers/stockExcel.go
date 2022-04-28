@@ -13,6 +13,8 @@ func GenerateStockExcel(products []models.ProductsModel, ctx *fiber.Ctx) (*bytes
 	firstRow := []string{"Title", "Slug", "XXS", "XS", "S", "M", "L", "XL", "XXL", "XXL"}
 
 	f := excelize.NewFile()
+	defer f.Close()
+
 	// Create a new worksheet.
 	activeSheet := f.NewSheet("Sheet1")
 	err := f.SetColWidth("Sheet1", "A", "A", 30)
