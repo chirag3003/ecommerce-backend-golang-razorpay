@@ -7,6 +7,7 @@ import (
 	"github.com/chirag3003/ecommerce-golang-api/repository"
 	"github.com/gofiber/fiber/v2"
 	"go.mongodb.org/mongo-driver/bson/primitive"
+	"log"
 	"strings"
 )
 
@@ -70,14 +71,18 @@ func (u *userRoutes) Login(ctx *fiber.Ctx) error {
 	if err != nil {
 		return ctx.SendStatus(fiber.StatusBadRequest)
 	}
+	log.Println("here")
 	data, _ := u.User.GetUser(user.Email)
+	log.Println("here")
 	if data == nil {
 		return ctx.SendStatus(fiber.StatusUnauthorized)
 	}
 	if !data.CheckPass(user.Password) {
 		return ctx.SendStatus(fiber.StatusUnauthorized)
 	}
+	log.Println("here")
 	jwt, err := data.GetJWT()
+	log.Println("here")
 	if err != nil {
 		return ctx.SendStatus(fiber.StatusInternalServerError)
 	}

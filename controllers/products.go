@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"fmt"
 	"github.com/chirag3003/ecommerce-golang-api/config"
 	"github.com/chirag3003/ecommerce-golang-api/helpers"
 	"github.com/chirag3003/ecommerce-golang-api/models"
@@ -17,6 +18,7 @@ type Products interface {
 	Delete(ctx *fiber.Ctx) error
 	Publicity(ctx *fiber.Ctx) error
 	Update(ctx *fiber.Ctx) error
+	GetStockExcel(ctx *fiber.Ctx) error
 }
 
 type productRoutes struct {
@@ -41,19 +43,14 @@ func (c *productRoutes) Create(ctx *fiber.Ctx) error {
 	body := &models.ProductsModel{}
 	err := ctx.BodyParser(body)
 	if err != nil {
+		fmt.Println(err)
 		return ctx.SendStatus(fiber.StatusBadRequest)
 	}
-
 	//validating input
 	inputError := helpers.ValidateProductData(body)
 	if inputError != nil {
+		fmt.Println(inputError)
 		return ctx.Status(fiber.StatusBadRequest).JSON(inputError)
-	}
-
-	//validating slug
-	find, _ := c.Products.Find(body.Slug)
-	if find != nil {
-		return ctx.Status(fiber.StatusBadRequest).SendString("slug already in use")
 	}
 
 	//setting default values for some fields
@@ -105,13 +102,9 @@ func (c *productRoutes) Publicity(ctx *fiber.Ctx) error {
 		return ctx.SendStatus(fiber.StatusBadRequest)
 	}
 
-	find, err := c.Products.FindByID(id)
+	_, err = c.Products.FindByID(id)
 	if err != nil {
 		return ctx.SendStatus(fiber.StatusNotFound)
-	}
-
-	if find.Stock == 0 {
-		return ctx.Status(fiber.StatusBadRequest).SendString("Stock Too Low")
 	}
 
 	visibility, err := c.Products.ChangeVisibility(id, input.Public)
@@ -139,13 +132,34 @@ func (c *productRoutes) Update(ctx *fiber.Ctx) error {
 		return ctx.Status(fiber.StatusBadRequest).JSON(inputError)
 	}
 
+	//validating slug
+	find, _ := c.Products.Find(body.Slug)
+	if find != nil && find.ID.String() != body.ID.String() {
+		return ctx.Status(fiber.StatusBadRequest).SendString("slug already in use")
+	}
+
 	//saving the data in the database
 	res, err := c.Products.Update(id, body)
 	if err != nil {
 		return ctx.SendStatus(fiber.StatusNotFound)
 	}
 
-	//fetching the object id of the created product
-
 	return ctx.Status(fiber.StatusOK).JSON(res)
+}
+
+func (c *productRoutes) GetStockExcel(ctx *fiber.Ctx) error {
+	// Getting Product Data
+	data, err := c.Products.FindAll()
+	if err != nil {
+		return ctx.SendStatus(fiber.StatusInternalServerError)
+	}
+
+	//Generating Excel File
+	file, err := helpers.GenerateStockExcel(data, ctx)
+	if err != nil {
+		return ctx.SendStatus(fiber.StatusInternalServerError)
+	}
+	
+	ctx.Set("Content-Type", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+	return ctx.SendStream(file)
 }

@@ -7,6 +7,7 @@ type ProductsModel struct {
 	ID          primitive.ObjectID `json:"_id,omitempty" bson:"_id,omitempty"` //ID: The Doc id of mongodb
 	Title       string             `json:"title"`                              //Title  of the Product
 	Description string             `json:"description"`                        //Description The Product Description
+	Details     string             `json:"details"`                            //Details about the product
 	Images      []string           `json:"images"`                             //Images of the product
 	Price       float64            `json:"price"`                              //Price of the Product
 	Discount    float64            `json:"discount"`                           //Discount on the product in percent
@@ -17,7 +18,6 @@ type ProductsModel struct {
 	Category    string             `json:"category"`                           //Category The category of the product
 	Subcategory string             `json:"subcategory"`                        //Subcategory The SubCategory of the products
 	Slug        string             `json:"slug"`                               //Slug of the product which shows on the url
-	Stock       int                `json:"stock"`                              //Stock of the product
 	Public      bool               `json:"public"`                             //Public controls the visibility of the product
 
 }
