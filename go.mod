@@ -7,6 +7,7 @@ require (
 	github.com/aws/aws-sdk-go v1.43.41
 	github.com/gofiber/fiber/v2 v2.29.0
 	github.com/golang-jwt/jwt v3.2.2+incompatible
+	github.com/h2non/bimg v1.1.9
 	github.com/joho/godotenv v1.4.0
 	github.com/matoous/go-nanoid/v2 v2.0.0
 	github.com/xuri/excelize/v2 v2.6.0

@@ -2,6 +2,7 @@ package db
 
 import (
 	"context"
+	"fmt"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"os"
@@ -23,7 +24,7 @@ func (c *conn) Close() {
 }
 
 func (c *conn) DB() *mongo.Database {
-	return c.session.Database("Ecommerce")
+	return c.session.Database(os.Getenv("MONGO_DB"))
 }
 
 func ConnectMongo() Connection {
@@ -36,5 +37,6 @@ func ConnectMongo() Connection {
 	if err != nil {
 		panic(err)
 	}
+	fmt.Println("Database connected")
 	return &c
 }

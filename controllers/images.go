@@ -53,6 +53,10 @@ func (i *imagesRoutes) Upload(ctx *fiber.Ctx) error {
 		}
 		name := fmt.Sprintf("%s%s", id, filepath.Ext(file.Filename))
 		open, err := file.Open()
+		image, err := helpers.OptimizeImage(&open)
+		if err != nil {
+			return ctx.SendStatus(fiber.StatusInternalServerError)
+		}
 
 		if err != nil {
 			return err
@@ -61,7 +65,7 @@ func (i *imagesRoutes) Upload(ctx *fiber.Ctx) error {
 			Bucket: aws.String(os.Getenv("S3_BUCKET")),
 			ACL:    aws.String("public-read"),
 			Key:    aws.String(fmt.Sprintf("images/%s", name)),
-			Body:   open,
+			Body:   image,
 		})
 		imageUrl = append(imageUrl, res.Location)
 		_, _ = i.Images.NewImage(models.Image{
