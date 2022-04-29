@@ -36,6 +36,9 @@ func (c *productRoutes) FindAll(ctx *fiber.Ctx) error {
 	if err != nil {
 		return ctx.SendStatus(fiber.StatusInternalServerError)
 	}
+	if data == nil {
+		data = []models.ProductsModel{}
+	}
 	return ctx.Status(fiber.StatusOK).JSON(data)
 }
 
@@ -159,7 +162,7 @@ func (c *productRoutes) GetStockExcel(ctx *fiber.Ctx) error {
 	if err != nil {
 		return ctx.SendStatus(fiber.StatusInternalServerError)
 	}
-	
+
 	ctx.Set("Content-Type", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
 	return ctx.SendStream(file)
 }
