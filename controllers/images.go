@@ -67,16 +67,16 @@ func (i *imagesRoutes) Upload(ctx *fiber.Ctx) error {
 			Key:    aws.String(fmt.Sprintf("images/%s", name)),
 			Body:   image,
 		})
+		if err != nil {
+			log.Println(err)
+			return err
+		}
 		imageUrl = append(imageUrl, res.Location)
 		_, _ = i.Images.NewImage(models.Image{
 			Src: res.Location,
 			Key: fmt.Sprintf("images/%s", name),
 		})
 
-		if err != nil {
-			log.Println(err)
-			return err
-		}
 		err = open.Close()
 		if err != nil {
 			return ctx.SendStatus(fiber.StatusInternalServerError)

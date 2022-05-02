@@ -17,6 +17,7 @@ type ProductsModel struct {
 	Sizes       []ProductSize      `json:"sizes"`                              // Sizes available for the product
 	Category    string             `json:"category"`                           //Category The category of the product
 	Subcategory string             `json:"subcategory"`                        //Subcategory The SubCategory of the products
+	DesignID    string             `json:"designID" bson:"designID"`           //DesignID of the product
 	Slug        string             `json:"slug"`                               //Slug of the product which shows on the url
 	Public      bool               `json:"public"`                             //Public controls the visibility of the product
 
@@ -42,13 +43,14 @@ func (p *ProductsModel) SetDefaults() {
 	}
 	if p.Sizes == nil {
 		p.Sizes = []ProductSize{
-			{Name: "XXS", InStock: false}, {Name: "XS", InStock: false}, {Name: "S", InStock: false}, {
-				Name:    "M",
-				InStock: false,
-			}, {Name: "L", InStock: false}, {Name: "XL", InStock: false}, {Name: "2XL", InStock: false}, {
-				Name:    "3XL",
-				InStock: false,
-			},
+			{Name: "XXS"},
+			{Name: "XS"},
+			{Name: "S"},
+			{Name: "M"},
+			{Name: "L"},
+			{Name: "XL"},
+			{Name: "2XL"},
+			{Name: "3XL"},
 		}
 	}
 	p.Public = false
