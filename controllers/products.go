@@ -18,6 +18,7 @@ type Products interface {
 	Delete(ctx *fiber.Ctx) error
 	Publicity(ctx *fiber.Ctx) error
 	Update(ctx *fiber.Ctx) error
+	GetCartData(ctx *fiber.Ctx) error
 	GetStockExcel(ctx *fiber.Ctx) error
 }
 
@@ -104,8 +105,11 @@ func (c *productRoutes) Publicity(ctx *fiber.Ctx) error {
 	if err != nil {
 		return ctx.SendStatus(fiber.StatusBadRequest)
 	}
-
-	_, err = c.Products.FindByID(id)
+	ID, err := primitive.ObjectIDFromHex(id)
+	if err != nil {
+		return ctx.SendStatus(fiber.StatusBadRequest)
+	}
+	_, err = c.Products.FindByID(ID)
 	if err != nil {
 		return ctx.SendStatus(fiber.StatusNotFound)
 	}
@@ -148,6 +152,38 @@ func (c *productRoutes) Update(ctx *fiber.Ctx) error {
 	}
 
 	return ctx.Status(fiber.StatusOK).JSON(res)
+}
+
+func (c *productRoutes) GetCartData(ctx *fiber.Ctx) error {
+	var body []struct {
+		ID   primitive.ObjectID `json:"id"`
+		Size string             `json:"size"`
+	}
+	err := ctx.BodyParser(&body)
+	var resp []models.CartSearchResult
+	for _, product := range body {
+		data, err := c.Products.FindByID(product.ID)
+		if err != nil {
+			return err
+		}
+		var stock int
+		for _, size := range data.Sizes {
+			if size.Name == product.Size {
+				stock = size.Stock
+			}
+		}
+		resp = append(resp, models.CartSearchResult{
+			Product: data,
+			Size:    product.Size,
+			Stock:   stock,
+		})
+
+	}
+	if err != nil {
+		return err
+	}
+	fmt.Println(body)
+	return ctx.Status(fiber.StatusOK).JSON(resp)
 }
 
 func (c *productRoutes) GetStockExcel(ctx *fiber.Ctx) error {

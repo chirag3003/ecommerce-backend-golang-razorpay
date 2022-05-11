@@ -55,3 +55,9 @@ func (p *ProductsModel) SetDefaults() {
 	}
 	p.Public = false
 }
+
+type CartSearchResult struct {
+	Product *ProductsModel `json:"product"`
+	Size    string         `json:"size"`
+	Stock   int            `json:"stock"`
+}
