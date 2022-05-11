@@ -156,15 +156,20 @@ func (c *productRoutes) Update(ctx *fiber.Ctx) error {
 
 func (c *productRoutes) GetCartData(ctx *fiber.Ctx) error {
 	var body []struct {
-		ID   primitive.ObjectID `json:"id"`
-		Size string             `json:"size"`
+		ID       primitive.ObjectID `json:"id"`
+		Size     string             `json:"size"`
+		Quantity int                `json:"quantity"`
 	}
 	err := ctx.BodyParser(&body)
+	fmt.Println(body)
+	if err != nil {
+		return err
+	}
 	var resp []models.CartSearchResult
 	for _, product := range body {
 		data, err := c.Products.FindByID(product.ID)
 		if err != nil {
-			return err
+			continue
 		}
 		var stock int
 		for _, size := range data.Sizes {
@@ -173,16 +178,14 @@ func (c *productRoutes) GetCartData(ctx *fiber.Ctx) error {
 			}
 		}
 		resp = append(resp, models.CartSearchResult{
-			Product: data,
-			Size:    product.Size,
-			Stock:   stock,
+			Product:  data,
+			Size:     product.Size,
+			Stock:    stock,
+			Quantity: product.Quantity,
 		})
 
 	}
-	if err != nil {
-		return err
-	}
-	fmt.Println(body)
+	fmt.Println(resp)
 	return ctx.Status(fiber.StatusOK).JSON(resp)
 }
 

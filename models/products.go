@@ -57,7 +57,8 @@ func (p *ProductsModel) SetDefaults() {
 }
 
 type CartSearchResult struct {
-	Product *ProductsModel `json:"product"`
-	Size    string         `json:"size"`
-	Stock   int            `json:"stock"`
+	Product  *ProductsModel `json:"product"`
+	Size     string         `json:"size"`
+	Stock    int            `json:"stock"`
+	Quantity int            `json:"quantity"`
 }
