@@ -7,3 +7,10 @@ type Image struct {
 	Src string             `json:"src"`
 	Key string             `json:"key"`
 }
+
+type GalleryImage struct {
+	ID   primitive.ObjectID `bson:"_id,omitempty" json:"_id,omitempty"`
+	Src  string             `json:"src"`
+	Key  string             `json:"key"`
+	Name string             `json:"name"`
+}
