@@ -7,7 +7,7 @@ import (
 	"github.com/chirag3003/ecommerce-golang-api/repository"
 	"github.com/gofiber/fiber/v2"
 	"go.mongodb.org/mongo-driver/bson/primitive"
-	"strings"
+	"log"
 )
 
 type User interface {
@@ -91,12 +91,14 @@ func (*userRoutes) Me(ctx *fiber.Ctx) error {
 
 func (u *userRoutes) UpdateName(ctx *fiber.Ctx) error {
 	user := helpers.ParseUser(ctx)
-	name := ctx.FormValue("name")
-	if strings.TrimSpace(name) == "" {
+	data := &models.UpdateUserInput{}
+	err := ctx.BodyParser(data)
+	if err != nil {
 		return ctx.SendStatus(fiber.StatusBadRequest)
 	}
-	result, err := u.User.UpdateName(name, user.ID)
+	result, err := u.User.UpdateName(data.Name, user.ID)
 	if err != nil {
+		log.Println(err)
 		return ctx.SendStatus(fiber.StatusInternalServerError)
 	}
 	return ctx.JSON(result)

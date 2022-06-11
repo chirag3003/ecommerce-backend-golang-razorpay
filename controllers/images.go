@@ -19,9 +19,10 @@ type Images interface {
 }
 
 func ImagesControllers() Images {
+	awsSession := helpers.ConnectS3()
 	return &imagesRoutes{
 		repository.NewImagesRepo(conn.DB()),
-		helpers.ConnectS3(),
+		awsSession,
 	}
 }
 
@@ -69,7 +70,11 @@ func (i *imagesRoutes) GalleryUpload(ctx *fiber.Ctx) error {
 	if err != nil || file == nil || strings.TrimSpace(ctx.FormValue("name")) == "" {
 		return ctx.SendStatus(fiber.StatusBadRequest)
 	}
-	log.Println(file.Filename)
+	image, _ := i.Images.GetGalleryImage(ctx.FormValue("name"))
+	if image != nil {
+		fmt.Println(err)
+		return ctx.Status(fiber.StatusBadRequest).JSON("name already exists")
+	}
 
 	uploadURL, err := helpers.UploadFile(i.awsSession, file, ctx.FormValue("name"))
 	if err != nil {
@@ -80,7 +85,6 @@ func (i *imagesRoutes) GalleryUpload(ctx *fiber.Ctx) error {
 		Key:  fmt.Sprintf("images/%s", ctx.FormValue("name")),
 		Name: ctx.FormValue("name"),
 	})
-	log.Println(uploadURL)
 	return ctx.SendString(uploadURL)
 }
 

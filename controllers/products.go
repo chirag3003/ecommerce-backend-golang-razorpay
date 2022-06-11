@@ -161,7 +161,6 @@ func (c *productRoutes) GetCartData(ctx *fiber.Ctx) error {
 		Quantity int                `json:"quantity"`
 	}
 	err := ctx.BodyParser(&body)
-	fmt.Println(body)
 	if err != nil {
 		return err
 	}

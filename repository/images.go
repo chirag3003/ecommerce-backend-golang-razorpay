@@ -12,6 +12,7 @@ type ImagesRepository interface {
 	NewImage(data models.Image) (*mongo.InsertOneResult, error)
 	NewGalleryImage(data models.GalleryImage) (*mongo.InsertOneResult, error)
 	GetGalleryImages() (*[]*models.GalleryImage, error)
+	GetGalleryImage(name string) (*models.GalleryImage, error)
 }
 
 func NewImagesRepo(db *mongo.Database) ImagesRepository {
@@ -50,6 +51,18 @@ func (i *imageRepo) GetGalleryImages() (*[]*models.GalleryImage, error) {
 	}
 	var data = &[]*models.GalleryImage{}
 	err = find.All(context.TODO(), data)
+	if err != nil {
+		return nil, err
+	}
+	return data, nil
+}
+
+func (i *imageRepo) GetGalleryImage(name string) (*models.GalleryImage, error) {
+	data := &models.GalleryImage{}
+	err := i.gallery.FindOne(context.TODO(), bson.D{{"name", name}}).Decode(data)
+	if err != nil {
+		return nil, err
+	}
 	if err != nil {
 		return nil, err
 	}

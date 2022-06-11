@@ -23,6 +23,10 @@ type UserResponse struct {
 	Email string             `json:"email"`
 }
 
+type UpdateUserInput struct {
+	Name string `json:"name"`
+}
+
 func (user *User) GetJWT() (string, error) {
 	//Generating JWT token
 	token := jwt.New(jwt.SigningMethodHS256)

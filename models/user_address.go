@@ -12,6 +12,7 @@ type UserAddress struct {
 	Country      string             `json:"country" bson:"country,omitempty"`
 	City         string             `json:"city" bson:"city,omitempty"`
 	Zipcode      string             `json:"zipcode" bson:"zipcode,omitempty"`
+	Landmark     string             `json:"landmark" bson:"landmark,omitempty"`
 }
 
 type UserAddressInput struct {
@@ -22,4 +23,5 @@ type UserAddressInput struct {
 	Country      string `bson:"country,omitempty"`
 	City         string `bson:"city,omitempty"`
 	Zipcode      string `bson:"zipcode,omitempty"`
+	Landmark     string `json:"landmark" bson:"landmark,omitempty"`
 }
