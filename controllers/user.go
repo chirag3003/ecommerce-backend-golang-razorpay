@@ -1,13 +1,11 @@
 package controllers
 
 import (
-	"fmt"
 	"github.com/chirag3003/ecommerce-golang-api/helpers"
 	"github.com/chirag3003/ecommerce-golang-api/models"
 	"github.com/chirag3003/ecommerce-golang-api/repository"
 	"github.com/gofiber/fiber/v2"
 	"go.mongodb.org/mongo-driver/bson/primitive"
-	"log"
 )
 
 type User interface {
@@ -18,6 +16,7 @@ type User interface {
 	AddAddress(ctx *fiber.Ctx) error
 	GetAddresses(ctx *fiber.Ctx) error
 	UpdateAddress(ctx *fiber.Ctx) error
+	DeleteAddress(ctx *fiber.Ctx) error
 }
 
 func UserControllers() User {
@@ -98,7 +97,6 @@ func (u *userRoutes) UpdateName(ctx *fiber.Ctx) error {
 	}
 	result, err := u.User.UpdateName(data.Name, user.ID)
 	if err != nil {
-		log.Println(err)
 		return ctx.SendStatus(fiber.StatusInternalServerError)
 	}
 	return ctx.JSON(result)
@@ -123,7 +121,6 @@ func (u *userRoutes) GetAddresses(ctx *fiber.Ctx) error {
 	user := helpers.ParseUser(ctx)
 	addresses, err := u.User.GetAddresses(user.ID)
 	if err != nil {
-		fmt.Println(err)
 		return ctx.SendStatus(fiber.StatusBadRequest)
 	}
 	return ctx.JSON(addresses)
@@ -140,7 +137,16 @@ func (u *userRoutes) UpdateAddress(ctx *fiber.Ctx) error {
 
 	response, err := u.User.UpdateAddress(user.ID, ID, body)
 	if err != nil {
-		return err
+		return ctx.SendStatus(fiber.StatusBadRequest)
 	}
 	return ctx.JSON(response)
+}
+
+func (u *userRoutes) DeleteAddress(ctx *fiber.Ctx) error {
+	ID := ctx.Params("id")
+	result, err := u.User.DeleteAddress(ID)
+	if err != nil {
+		return ctx.SendStatus(fiber.StatusBadRequest)
+	}
+	return ctx.Status(fiber.StatusNoContent).JSON(result)
 }

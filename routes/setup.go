@@ -14,4 +14,5 @@ func NewRoutes(cont *controllers.Controllers, app *fiber.App) {
 	UserRoutes(app.Group("/user"))
 	OrderRoutes(app.Group("/order"))
 	ImagesRoutes(app.Group("/images"))
+
 }

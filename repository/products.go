@@ -2,6 +2,7 @@ package repository
 
 import (
 	"context"
+	"github.com/chirag3003/ecommerce-golang-api/config"
 	"github.com/chirag3003/ecommerce-golang-api/models"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -22,9 +23,9 @@ type productRepo struct {
 	db *mongo.Collection
 }
 
-func NewProductsRepository(Products *mongo.Collection) ProductsRepository {
+func NewProductsRepository(col *mongo.Database) ProductsRepository {
 	return &productRepo{
-		db: Products,
+		db: col.Collection(config.PRODUCTS_COLLECTION),
 	}
 }
 

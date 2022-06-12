@@ -2,7 +2,6 @@ package controllers
 
 import (
 	"fmt"
-	"github.com/chirag3003/ecommerce-golang-api/config"
 	"github.com/chirag3003/ecommerce-golang-api/helpers"
 	"github.com/chirag3003/ecommerce-golang-api/models"
 	"github.com/chirag3003/ecommerce-golang-api/repository"
@@ -28,7 +27,7 @@ type productRoutes struct {
 
 func ProductsControllers() Products {
 	return &productRoutes{
-		Products: repository.NewProductsRepository(conn.DB().Collection(config.PRODUCTS_COLLECTION)),
+		Products: repository.NewProductsRepository(conn.DB()),
 	}
 }
 

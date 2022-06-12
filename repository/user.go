@@ -17,6 +17,7 @@ type UserRepository interface {
 	AddAddress(ID primitive.ObjectID, data *models.UserAddress) (*mongo.InsertOneResult, error)
 	GetAddresses(id primitive.ObjectID) (*[]models.UserAddress, error)
 	UpdateAddress(userID primitive.ObjectID, id string, address *models.UserAddressInput) (*mongo.UpdateResult, error)
+	DeleteAddress(id string) (*mongo.DeleteResult, error)
 }
 
 func NewUserRepository(col *mongo.Database) UserRepository {
@@ -75,6 +76,15 @@ func (c userRepo) AddAddress(ID primitive.ObjectID, data *models.UserAddress) (*
 	return result, nil
 }
 
+func (c userRepo) GetAddressByID(ID primitive.ObjectID) (*models.UserAddress, error) {
+	data := &models.UserAddress{}
+	err := c.Address.FindOne(context.TODO(), bson.D{{"_id", ID}}).Decode(data)
+	if err != nil {
+		return nil, err
+	}
+	return data, nil
+}
+
 func (c userRepo) GetAddresses(id primitive.ObjectID) (*[]models.UserAddress, error) {
 	find, err := c.Address.Find(context.TODO(), bson.M{"userID": id})
 	if err != nil {
@@ -94,10 +104,22 @@ func (c userRepo) UpdateAddress(userID primitive.ObjectID, id string, address *m
 		return nil, err
 	}
 
-	data, err := c.Address.UpdateByID(context.TODO(), bson.M{"_id": ID, "userID": userID}, bson.M{"$set": address})
+	data, err := c.Address.UpdateOne(context.TODO(), bson.M{"_id": ID, "userID": userID}, bson.M{"$set": address})
 	if err != nil {
 		return nil, err
 	}
 
 	return data, nil
+}
+
+func (c userRepo) DeleteAddress(id string) (*mongo.DeleteResult, error) {
+	ID, err := primitive.ObjectIDFromHex(id)
+	if err != nil {
+		return nil, err
+	}
+	result, err := c.Address.DeleteOne(context.TODO(), bson.D{{"_id", ID}})
+	if err != nil {
+		return nil, err
+	}
+	return result, nil
 }

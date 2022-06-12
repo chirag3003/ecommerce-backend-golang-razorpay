@@ -9,6 +9,7 @@ type UserAddress struct {
 	PhoneNo      int64              `json:"phoneNo" bson:"phoneNo,omitempty"`
 	AddressLine1 string             `json:"addressLine1" bson:"addressLine1,omitempty"`
 	AddressLine2 string             `json:"addressLine2" bson:"addressLine2,omitempty"`
+	State        string             `json:"state" bson:"state,omitempty"`
 	Country      string             `json:"country" bson:"country,omitempty"`
 	City         string             `json:"city" bson:"city,omitempty"`
 	Zipcode      string             `json:"zipcode" bson:"zipcode,omitempty"`
