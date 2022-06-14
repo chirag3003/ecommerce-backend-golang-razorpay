@@ -18,6 +18,7 @@ type UserRepository interface {
 	GetAddresses(id primitive.ObjectID) (*[]models.UserAddress, error)
 	UpdateAddress(userID primitive.ObjectID, id string, address *models.UserAddressInput) (*mongo.UpdateResult, error)
 	DeleteAddress(id string) (*mongo.DeleteResult, error)
+	GetAddressByID(ID primitive.ObjectID) (*models.UserAddress, error)
 }
 
 func NewUserRepository(col *mongo.Database) UserRepository {

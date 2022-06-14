@@ -17,6 +17,9 @@ func VerifyENV() {
 		"S3_REGION",
 		"S3_BUCKET",
 		"S3_ENDPOINT",
+		"RAZORPAY_KEY",
+		"RAZORPAY_SECRET",
+		"RAZORPAY_WEBHOOK_SECRET",
 	}
 
 	err := false

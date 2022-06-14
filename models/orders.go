@@ -8,6 +8,7 @@ import (
 type Order struct {
 	ID            primitive.ObjectID `json:"_id,omitempty" bson:"_id,omitempty"`
 	OrderID       string             `json:"orderID" bson:"orderID"`
+	UserID        primitive.ObjectID `json:"userID" bson:"userID"`
 	Address       UserAddress        `json:"address" bson:"address"`
 	Products      []OrderProduct     `json:"products" bson:"products"`
 	OrderStatus   string             `json:"orderStatus" bson:"orderStatus"`
@@ -37,6 +38,7 @@ type NewOrderProductInput struct {
 
 func (o *Order) SetCreatedAt() {
 	o.CreatedAt = time.Now().Unix()
+	o.UpdatedAt = o.CreatedAt
 }
 
 func (o *Order) SetUpdatedAt() {
