@@ -15,6 +15,8 @@ type Order interface {
 	NewOrder(ctx *fiber.Ctx) error
 	OrderPaid(ctx *fiber.Ctx) error
 	OrderEvents(ctx *fiber.Ctx) error
+	GetOrders(ctx *fiber.Ctx) error
+	GetOrder(ctx *fiber.Ctx) error
 }
 
 func OrderControllers() Order {
@@ -71,7 +73,7 @@ func (c *orderRoutes) NewOrder(ctx *fiber.Ctx) error {
 	}
 
 	//creating orderID nad order model
-	orderID, err := gonanoid.Generate("abcdefghijklmnopqrstuvwxyz-123456789", 10)
+	orderID, err := gonanoid.Generate("abcdefghijklmnopqrstuvwxyz123456789", 10)
 	if err != nil {
 		return ctx.SendStatus(fiber.StatusInternalServerError)
 	}
@@ -114,8 +116,39 @@ func (c *orderRoutes) NewOrder(ctx *fiber.Ctx) error {
 	if err != nil {
 		return ctx.SendStatus(fiber.StatusInternalServerError)
 	}
+	response := &models.NewOrderResponse{
+		TransactionID: transaction.Razorpay.RazorpayID,
+		OrderID:       order.OrderID,
+	}
+	return ctx.JSON(response)
+}
 
-	return ctx.JSON(transaction.Razorpay.RazorpayID)
+func (c *orderRoutes) GetOrders(ctx *fiber.Ctx) error {
+	user := helpers.ParseUser(ctx)
+	orders, err := c.Order.GetOrders(user.ID)
+	if err != nil {
+		log.Println(err)
+		return ctx.SendStatus(fiber.StatusInternalServerError)
+	}
+	if orders == nil {
+		orders = &[]models.Order{}
+	}
+	return ctx.JSON(orders)
+}
+func (c *orderRoutes) GetOrder(ctx *fiber.Ctx) error {
+	user := helpers.ParseUser(ctx)
+	orderID := ctx.Params("orderID")
+	order, err := c.Order.GetOrder(orderID)
+	if err != nil {
+		if err.Error() == "mongo: no documents in result" {
+			return ctx.SendStatus(fiber.StatusNotFound)
+		}
+		return ctx.SendStatus(fiber.StatusInternalServerError)
+	}
+	if order.UserID != user.ID {
+		return ctx.SendStatus(fiber.StatusNotFound)
+	}
+	return ctx.JSON(order)
 }
 
 func (c *orderRoutes) OrderPaid(ctx *fiber.Ctx) error {

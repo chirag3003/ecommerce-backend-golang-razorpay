@@ -36,6 +36,11 @@ type NewOrderProductInput struct {
 	Quantity int                `json:"quantity"`
 }
 
+type NewOrderResponse struct {
+	OrderID       string `json:"orderID" bson:"orderID"`
+	TransactionID string `json:"transactionID" bson:"transactionID"`
+}
+
 func (o *Order) SetCreatedAt() {
 	o.CreatedAt = time.Now().Unix()
 	o.UpdatedAt = o.CreatedAt
