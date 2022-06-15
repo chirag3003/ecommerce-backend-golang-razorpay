@@ -7,7 +7,6 @@ import (
 	"github.com/chirag3003/ecommerce-golang-api/repository"
 	"github.com/gofiber/fiber/v2"
 	"go.mongodb.org/mongo-driver/bson/primitive"
-	"log"
 )
 
 type Products interface {
@@ -52,7 +51,6 @@ func (c *productRoutes) Create(ctx *fiber.Ctx) error {
 	//validating input
 	inputError := helpers.ValidateProductData(body)
 	if inputError != nil {
-		fmt.Println(inputError)
 		return ctx.Status(fiber.StatusBadRequest).JSON(inputError)
 	}
 
@@ -133,8 +131,6 @@ func (c *productRoutes) Update(ctx *fiber.Ctx) error {
 	//validating input
 	inputError := helpers.ValidateProductData(body)
 	if inputError != nil {
-
-		log.Println(inputError)
 		return ctx.Status(fiber.StatusBadRequest).JSON(inputError)
 	}
 
@@ -183,7 +179,6 @@ func (c *productRoutes) GetCartData(ctx *fiber.Ctx) error {
 		})
 
 	}
-	fmt.Println(resp)
 	return ctx.Status(fiber.StatusOK).JSON(resp)
 }
 
