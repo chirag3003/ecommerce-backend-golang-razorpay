@@ -8,6 +8,7 @@ import (
 type Order struct {
 	ID            primitive.ObjectID `json:"_id,omitempty" bson:"_id,omitempty"`
 	OrderID       string             `json:"orderID" bson:"orderID"`
+	Amount        float64            `json:"amount" bson:"amount"`
 	UserID        primitive.ObjectID `json:"userID" bson:"userID"`
 	Address       UserAddress        `json:"address" bson:"address"`
 	Products      []OrderProduct     `json:"products" bson:"products"`
@@ -20,7 +21,7 @@ type Order struct {
 }
 
 type OrderProduct struct {
-	Product  ProductsModel `json:"productID" bson:"productID"`
+	Product  ProductsModel `json:"product" bson:"product"`
 	Size     string        `json:"size" bson:"size"`
 	Quantity int           `json:"quantity" bson:"quantity"`
 }

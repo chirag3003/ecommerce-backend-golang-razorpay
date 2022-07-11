@@ -79,6 +79,7 @@ func (c *orderRoutes) NewOrder(ctx *fiber.Ctx) error {
 	}
 	order := &models.Order{
 		OrderID:       orderID,
+		Amount:        amount,
 		UserID:        user.ID,
 		Address:       *address,
 		Products:      products,
@@ -122,12 +123,10 @@ func (c *orderRoutes) NewOrder(ctx *fiber.Ctx) error {
 	}
 	return ctx.JSON(response)
 }
-
 func (c *orderRoutes) GetOrders(ctx *fiber.Ctx) error {
 	user := helpers.ParseUser(ctx)
 	orders, err := c.Order.GetOrders(user.ID)
 	if err != nil {
-		log.Println(err)
 		return ctx.SendStatus(fiber.StatusInternalServerError)
 	}
 	if orders == nil {
@@ -150,7 +149,6 @@ func (c *orderRoutes) GetOrder(ctx *fiber.Ctx) error {
 	}
 	return ctx.JSON(order)
 }
-
 func (c *orderRoutes) OrderPaid(ctx *fiber.Ctx) error {
 	if !helpers.ValidateWebhook(ctx) {
 		return ctx.SendStatus(fiber.StatusNotFound)
@@ -182,7 +180,6 @@ func (c *orderRoutes) OrderPaid(ctx *fiber.Ctx) error {
 	return ctx.SendStatus(200)
 
 }
-
 func (c *orderRoutes) OrderEvents(ctx *fiber.Ctx) error {
 	if !helpers.ValidateWebhook(ctx) {
 		return ctx.SendStatus(fiber.StatusNotFound)
