@@ -45,7 +45,7 @@ func UploadFile(awsSession *session.Session, file *multipart.FileHeader, name st
 	if len(bucketName) > 0 {
 		bucket = bucketName[0]
 	}
-	
+
 	key := fmt.Sprintf("images/%s%s", name, ".webp")
 	_, err = uploader.Upload(&s3manager.UploadInput{
 		Bucket: aws.String(bucket),
@@ -56,6 +56,6 @@ func UploadFile(awsSession *session.Session, file *multipart.FileHeader, name st
 	if err != nil {
 		return "", err
 	}
-	imgUrl := fmt.Sprintf("%s/%s",os.Getenv("S3_OBJECT_URL"),key)
+	imgUrl := fmt.Sprintf("%s/%s", os.Getenv("S3_OBJECT_URL"), key)
 	return imgUrl, nil
 }
